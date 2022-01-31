@@ -31,7 +31,7 @@ project-root
 |   |-electron-bin     <------ electron dist,it will be auto download,if you move to a 
 |                              new arch computer,it will auto update
 |
-|-main.py              <------ loader of your project(you can write it by yourself, this 
+|-start.py             <------ loader of your project(you can write it by yourself, this 
 |                              folder is inited if you use EelS Toolkit to create project)
 |-packages             <------ python modules (if you use EelS to manage your package,it 
 |                              will install python modules here.
