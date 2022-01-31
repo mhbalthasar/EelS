@@ -4,6 +4,7 @@ import platform
 from argparse import ArgumentParser
 
 default_dir=os.path.abspath('.')
+eels_source="https://github.com.cnpmjs.org/mhbalthasar/EelS.git"
 
 class _init_electrondist:
     def get_electron_url(self):
@@ -97,6 +98,18 @@ class _init_electrondist:
 #_electron_dist=_init_electrondist(base_path)
 #electron_path=_electron_dist.electron_path
 
+def installpackage(basedir,uargs):
+    if len(uargs)==0:
+        print("You must input which module you want to install")
+        return
+    module_path=os.path.abspath(os.path.join(basedir,"packages"))
+    if not os.path.exists(module_path):
+        os.makedirs(module_path)
+    fullargs=["pip3","install","--target=%s" % module_path,"--upgrade"]
+    cmdargs=fullargs+uargs
+    import subprocess
+    subprocess.run(cmdargs)
+
 def createproject(basefolder):
     defaultpage="""<html>
     <head>
@@ -131,9 +144,9 @@ def slot_recieve_msg(msg):
     print('Sendmessage to frontend:%s' % msg)
     eels.eel.js_alertbox(msg)
 
-def main(base_dir):
+def main():
     print("Begin Main Thread")
-    eel.start()
+    eels.start()
     """
     bootloader="""import os
 import sys
@@ -142,8 +155,21 @@ base_dir=os.path.abspath(os.path.split(os.path.realpath(__file__))[0])
 module_path=os.path.abspath(os.path.join(os.path.split(os.path.realpath(__file__))[0],"packages"))
 sys.path.append(module_path)
 
+deployfile=os.path.abspath(os.path.join(os.path.split(os.path.realpath(__file__))[0],"base_library.zip"))
+if not (os.path.exists(deployfile) and os.path.isfile(deployfile)) :
+    #If Not Deployed
+    eelsfile=os.path.join(module_path,"eels","__init__.py")
+    if not os.path.exists(eelsfile):
+        pipargs=["pip3","install","--target=%s" % module_path, "--upgrade"]
+        reqfile=os.path.join(base_dir,"requirements.txt");
+        import subprocess
+        if (os.path.exists(reqfile)):
+            subprocess.run(pipargs+["-r",reqfile])
+        if not os.path.exists(eelsfile):
+            subprocess.run(pipargs+["git+https://github.com.cnpmjs.org/mhbalthasar/EelS.git"])
+
 import sources.main as main
-main.main(base_dir)
+main.main()
     """
     print("Creating root folder...")
     folder=os.path.abspath(basefolder)
@@ -185,12 +211,82 @@ main.main(base_dir)
         tmp_d=os.path.join(folder,"packages")
         if not os.path.exists(tmp_d):
             os.makedirs(tmp_d)
+        print("Install packages...")
+        tmp_f=os.path.join(folder,"packages","eels","__init__.py")
+        if not os.path.exists(tmp_f):
+            tmp_req=os.path.join(folder,"requirements.txt")
+            if os.path.exists(tmp_req):
+                print("Install requirements packages...")
+                installpackage(folder,["-r",tmp_req])
+            installpackage(folder,["git+%s" % eels_source])
         print("Creating start.py...")
         tmp_f=os.path.join(folder,"start.py")
         if not os.path.exists(tmp_f):
             with open(tmp_f, "w", encoding="utf-8") as f:
                 f.write(bootloader)
+        print("Creating requirements for reinstall...")
+        tmp_f=os.path.join(folder,"requirements.txt")
+        if not os.path.exists(tmp_f):
+            with open(tmp_f, "w", encoding="utf-8") as f:
+                f.write("git+%s\n" % eels_source)
+        print("All Project Prepared! You can use 'python3 start.py' command to run it in %s" % folder)
     return
+
+
+def installpackage(basedir,uargs):
+    if len(uargs)==0:
+        print("You must input which module you want to install")
+        return
+    module_path=os.path.abspath(os.path.join(basedir,"packages"))
+    if not os.path.exists(module_path):
+        os.makedirs(module_path)
+    fullargs=["pip3","install","--target=%s" % module_path,"--upgrade"]
+    cmdargs=fullargs+uargs
+    import subprocess
+    subprocess.run(cmdargs)
+
+def deployexe(basedir,uargs):
+    createproject(basedir)
+    module_path=os.path.abspath(os.path.join(basedir,"packages"))
+    base_full_dir=os.path.abspath(basedir)
+    cur_full_dir=os.path.abspath('.')
+
+    sys.path.append(module_path)
+    try:
+        __import__("PyInstaller")
+    except:
+        import subprocess
+        subprocess.run(["pip3","install","--upgrade","PyInstaller"])
+    import PyInstaller.__main__ as pyi
+    pyi.run([os.path.join(base_full_dir,"start.py"),"--hidden-import","bottle_websocket","--add-data","%s/eel/eel.js:eel" % module_path,
+        "--add-data", "%s:assets" % os.path.join(base_full_dir,"assets")] + uargs)
+
+def cleanproject(basedir):
+    d_electron=os.path.abspath(os.path.join(basedir,"assets","electron_bin"))
+    d_packages=os.path.abspath(os.path.join(basedir,"packages"))
+    d_build=os.path.abspath(os.path.join(basedir,"build"))
+    d_dist=os.path.abspath(os.path.join(basedir,"dist"))
+    d_cache=os.path.abspath(os.path.join(basedir,"__pycache__"))
+    d_spec=os.path.abspath(os.path.join(basedir,"start.spec"))
+    import shutil
+    if os.path.exists(d_electron):
+        print("Clean Electron_Dist")
+        shutil.rmtree(d_electron)
+    if os.path.exists(d_packages):
+        print("Clean Private_Modules")
+        shutil.rmtree(d_packages)
+    if os.path.exists(d_build):
+        print("Clean Deploy_Build")
+        shutil.rmtree(d_build)
+    if os.path.exists(d_dist):
+        print("Clean Deploy_Dist")
+        shutil.rmtree(d_dist)
+    if os.path.exists(d_spec):
+        print("Clean Spec File")
+        os.remove(d_spec)
+    if os.path.exists(d_cache):
+        print("Clean PyCache")
+        shutil.rmtree(d_cache)
 
 
 def main():
@@ -221,6 +317,8 @@ def main():
             print('\npositional arguments:')
             print('\t project_dir\tThe folder of your project which you want to Clean.after this the bin of project and cpu arch is cutted down. you should use --create to relink them.\n')
             return
+        cleanproject(args.commands)
+        return
 
     elif args.install:
         #ToDo Import
@@ -229,8 +327,9 @@ def main():
             print('\npositional arguments:')
             print('\t project_dir\tThe folder of your project which you want to create or fix.')
             print('\t modulename\tThe module name you want to install.\n')
-
             return
+        installpackage(args.commands,unknown_args)
+        return
 
     elif args.deploy:
         #ToDo Deploy
@@ -240,6 +339,8 @@ def main():
             print('\t project_dir\tThe folder of your project which you want to create or fix.')
             print('\t attend_arguments\tThe arguments you want to pass to PyInstaller.\n')
             return
+        deployexe(args.commands,unknown_args)
+        return
 
 
 if __name__ == '__main__':
