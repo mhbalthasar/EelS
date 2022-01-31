@@ -69,7 +69,7 @@ def slot_py(msg):
   2.Python to Electron
  
   the declare which is send message from python to electron(gui,js) is quit a little different.cause EelS import and package latest version Eel. so you must use the function jscall() to invoke the Eel functions (you can also use const declare eel to call eel module directly).
-``
+```
 <!-- HTML SIDE -->
 <html>
 <head>
@@ -83,6 +83,7 @@ def slot_py(msg):
 </script>
 </body>
 ```
+
 ```
 #Python SIDE
 import eels
@@ -125,16 +126,26 @@ python3 ./eelstool.py [arguments]
 python3 ./eelstool.py --create ~/eelproject
 ```
 
+* How to clean a runable project
+ 
+  If you want to publish your sources code,you need to remove the electron_dist and packages.one way is use .gitignore to ignore folder assets/electron_bin and packages.but there is another way:to use tookit to remove them. when you want to use them again, you should use --create command to call them back:
+  1.prepare toolkit
+  2.chdir to a project folder ,for example: ~/eelproject
+  3.run "--clean" command via tookit:
+```
+python3 ./eelstool.py --clean ~/eelproject
+```
+
 * How to install a modules
  
   You can use pip3 command to install a modules directly.but if you want to use the suggest project struct or you don't want to change anything in os(with out virtualenv and etc.),you can use this command:
 
   1.chdir to the root of your project , for example ~/eelproject
   
-  2.run "--import" command: (use paddlehub module as example)
+  2.run "--install" command: (use paddlehub module as example)
 ```
 cd ~/eelproject
-python3 ./eelstool --import paddlehub
+python3 ./eelstool --install paddlehub
 ```
 
 * How to deploy project:
