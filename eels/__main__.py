@@ -275,7 +275,30 @@ def deployexe(basedir,uargs):
     import PyInstaller.__main__ as pyi
     eel_file_path="%s%seel" % (os.path.join(module_path,"eel","eel.js"), os.pathsep)
     assets_dir_path="%s%sassets" % (os.path.join(base_full_dir,"assets"), os.pathsep)
-    pyi.run([os.path.join(base_full_dir,"start.py"),"--hidden-import","bottle_websocket","--add-data",eel_file_path,
+    pyi.run([os.path.join(base_full_dir,"start.py"),
+        "--hidden-import","bottle_websocket",
+        "--hidden-import","gevent.__hub_local",
+        "--hidden-import","gevent.__hub_local",
+        "--hidden-import","gevent.__greenlet_primitives",
+        "--hidden-import","gevent.__waiter",
+        "--hidden-import","gevent.__hub_primitives",
+        "--hidden-import","gevent._greenlet",
+        "--hidden-import","gevent.__ident",
+        "--hidden-import","gevent.time",
+        "--hidden-import","gevent.__semaphore",
+        "--hidden-import","gevent._local",
+        "--hidden-import","gevent._event",
+        "--hidden-import","gevent._queue",
+        "--hidden-import","gevent.__imap",
+        "--hidden-import","gevent.libuv",
+        "--hidden-import","gevent.libuv.loop",
+        "--hidden-import","gevent.libev",
+        "--hidden-import","gevent.libev.corecffi",
+        "--hidden-import","bottle_websocket",
+        "--hidden-import","bottle_websocket",
+        "--hidden-import","bottle_websocket",
+        "--hidden-import","bottle_websocket",
+        "--add-data",eel_file_path,
         "--add-data", assets_dir_path] + uargs)
 
 def cleanproject(basedir):
