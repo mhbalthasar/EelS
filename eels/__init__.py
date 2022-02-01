@@ -62,17 +62,28 @@ class _init_electrondist:
     electron_path=""
 
     def __init__(self,base_path):
-        electron_dir=os.path.join(base_path,'assets','electron_bin',self.get_system_arch())
-        electron_path=''
+        electron_dir_rev=os.path.join('assets','electron_bin',self.get_system_arch())
+        electron_path_rev=''
         if sys.platform in ['win32', 'win64']:
-            electron_path = os.path.join(electron_dir,r'electron.exe')
+            electron_path_rev = os.path.join(electron_dir_rev,r'electron.exe')
         elif sys.platform in ['linux', 'freebsd']:
-            electron_path = os.path.join(electron_dir,r'electron')
+            electron_path_rev = os.path.join(electron_dir_rev,r'electron')
         elif sys.platform in ['darwin', 'macos']:
-            electron_path = os.path.join(electron_dir,r'Electron.app','Contents','MacOS','Electron')
+            electron_path_rev = os.path.join(electron_dir_rev,r'Electron.app','Contents','MacOS','Electron')
+        #Try Local
+        electron_path=os.path.join(base_path,electron_path_rev)
         if os.path.exists(os.path.abspath(electron_path)) and os.path.isfile(os.path.abspath(electron_path)):
             self.electron_path = electron_path
             return
+        #Try Pkg
+        try:
+            electron_path=os.path.join(sys._MEIPASS,electron_path_rev)
+            if os.path.exists(os.path.abspath(electron_path)) and os.path.isfile(os.path.abspath(electron_path)):
+                self.electron_path = electron_path
+                return
+        except:
+            pass
+        electron_dir=os.path.join(base_path,electron_dir_rev)
         zippath=self.download_file(self.get_electron_url())
         import zipfile
         import subprocess
@@ -91,7 +102,14 @@ class _init_electrondist:
             return
 
 base_path=os.path.split(sys.argv[0])[0]
+
 view_path=os.path.join(base_path,'assets','views')
+try:
+    pkgdir=sys._MEIPASS
+    view_path=os.path.join(pkgdir,'assets','views')
+except:
+    pass
+ 
 _electron_dist=_init_electrondist(base_path)
 electron_path=_electron_dist.electron_path
 
