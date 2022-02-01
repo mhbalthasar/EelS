@@ -159,6 +159,7 @@ def main():
     """
     bootloader="""import os
 import sys
+from pip._internal import main as pipexec
 
 base_dir=os.path.abspath(os.path.split(os.path.realpath(__file__))[0])
 module_path=os.path.abspath(os.path.join(os.path.split(os.path.realpath(__file__))[0],"packages"))
