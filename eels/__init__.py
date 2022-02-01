@@ -8,27 +8,28 @@ from urllib.parse import urljoin
 
 class _init_electrondist:
     def get_system_arch(self):
-        sys_arch=platform.machine()
-        if sys_arch in ["x86_64","ia64"]:
+        sys_arch=platform.machine().lower()
+        if sys_arch in ["x86_64","ia64","amd64"]:
             return "amd64"
-        elif sys_arch in ["i386","i686"]:
+        elif sys_arch in ["i386","i686","intel"]:
             return "x86"
         elif sys_arch in ["arm64","aarch64", "armv8"]:
             return "arm64"
         elif sys_arch in ["armv7l", "arm", "armhf"]:
             return "armhf"
         return "unknown"
+
     def get_electron_url(self):
         electron_Version="9.4.4" # Use 9.4.4 because it is easy to use 'remote' module to control gui.
         electron_Source="https://npm.taobao.org/mirrors/electron"
-        sys_arch=platform.machine()
+        sys_arch=platform.machine().lower()
         sys_platform=sys.platform
         electron_Tail=''
         if sys_platform in ['win32','win64']:
             #it is windows
-            if sys_arch == "x86_64":
+            if sys_arch in ["x86_64","amd64"]:
                 electron_Tail="win32-x64"
-            elif sys_arch == "i386":
+            elif sys_arch in ["i386","i686","intel"]:
                 electron_Tail="win32-i386"
             elif sys_arch == "aarch64":
                 electron_Tail="win32-arm64"
