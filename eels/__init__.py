@@ -156,3 +156,17 @@ def jscall():
 
 def expose(name_or_function=None):
     return eel.expose(name_or_function)
+
+def get_base_dir():
+    return base_path
+
+def get_resource_dir():
+    try:
+        wd=sys._MEIPASS
+        return wd
+    except:
+        return base_path
+
+def get_assets_dir():
+    assetdir=os.path.join(get_resource_dir(),"assets")
+    return assetdir

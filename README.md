@@ -162,4 +162,36 @@ python3 ./eelstool.py --deploy ~/eelproject
 ```
 python3 ./eelstool.py --deploy ~/eelproject -F
 ```
+
+* Some expand function:
+
+ In EelS, there is some static function be appended to help you got resource easily.
+
+ Example1: Get the directory path of executeable file
+
+```
+print(eels.get_base_dir())
+#This function always return the directory of executeable file,it will return:
+#Run as script: return the directory of loader: "start.py"
+#Run as deployed directory: return the directory of executeable loader "start"
+#Run as deployed file(one file deploy): return the directory of executeable loader "start"
+```
+
+ Example2: Get the directory path of resources file
+
+```
+print(eels.get_resourcedir())
+#This function always return the resource directory of project.if the project is deployed,use this could help you find out the attend resources.
+#Run as script: return the directory of loader: "start.py"
+#Run as deployed directory: return the directory of executeable loader "start"
+#Run as deployed file(one file deploy): return the _MEIPASS directory of package(for example:/tmp/_MEIsigea)
+```
+
+ Example3: Get the directory path of assets
+
+```
+print(eels.get_assets_dir())
+#This function always return the directory of "assets",if you put some file in the assets folder of project.it will let you got it when you deployed.
+```
+
 * More function see Eel Documets.you can call them via eels.jscall().xxxx or eels.eel.xxxx as same as eel.xxxx [Documents](http://github.com/ChrisKnott/Eel)
