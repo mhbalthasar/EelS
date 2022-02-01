@@ -296,6 +296,12 @@ def cleanproject(basedir):
     if os.path.exists(d_cache):
         print("Clean PyCache")
         shutil.rmtree(d_cache)
+        for root, dirs, files in os.walk(basedir):
+            for dirname in dirs:
+                if dirname == "__pycache__":
+                    shutil.rmtree(os.path.join(root,dirname))
+    print("Done.")
+
 
 
 def main():

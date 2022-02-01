@@ -145,14 +145,18 @@ python3 ./eelstool.py --clean ~/eelproject
   2.run "--install" command: (use paddlehub module as example)
 ```
 cd ~/eelproject
-python3 ./eelstool --install paddlehub
+python3 ./eelstool.py --install paddlehub
 ```
 
 * How to deploy project:
  
  As same as eel,Eel tookit was also have delopy function.you can use those command to deploy
 ```
-cd ~/eelproject
-python3 ./eelstool --deploy
+python3 ./eelstool.py --deploy ~/eelproject
+```
+ 
+ The deploy function is bases PyInstall, so you can bypass the arguments to PyInstaller. for example, you want a one file deploy:
+```
+python3 ./eelstool.py --deploy ~/eelproject -F
 ```
 * More function see Eel Documets.you can call them via eels.jscall().xxxx or eels.eel.xxxx as same as eel.xxxx [Documents](http://github.com/ChrisKnott/Eel)
