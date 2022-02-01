@@ -2,6 +2,7 @@ import os
 import sys
 import platform
 from argparse import ArgumentParser
+from pip._internal import main as pipexec
 
 default_dir=os.path.abspath('.')
 eels_source="https://github.com.cnpmjs.org/mhbalthasar/EelS.git"
@@ -112,10 +113,11 @@ def installpackage(basedir,uargs):
     module_path=os.path.abspath(os.path.join(basedir,"packages"))
     if not os.path.exists(module_path):
         os.makedirs(module_path)
-    fullargs=["pip3","install","--target=%s" % module_path,"--upgrade"]
-    cmdargs=fullargs+uargs
-    import subprocess
-    subprocess.run(cmdargs)
+    #fullargs=["pip3","install","--target=%s" % module_path,"--upgrade"]
+    #cmdargs=fullargs+uargs
+    #import subprocess
+    #subprocess.run(cmdargs)
+    pipexec(['install',"--target=%s" % module_path,"--upgrade"]+uargs)
 
 def createproject(basefolder):
     defaultpage="""<html>
@@ -167,13 +169,16 @@ if not (os.path.exists(deployfile) and os.path.isfile(deployfile)) :
     #If Not Deployed
     eelsfile=os.path.join(module_path,"eels","__init__.py")
     if not os.path.exists(eelsfile):
-        pipargs=["pip3","install","--target=%s" % module_path, "--upgrade"]
+        #pipargs=["pip3","install","--target=%s" % module_path, "--upgrade"]
+        pipargs=["install","--target=%s" % module_path, "--upgrade"]
         reqfile=os.path.join(base_dir,"requirements.txt");
-        import subprocess
+        #import subprocess
         if (os.path.exists(reqfile)):
-            subprocess.run(pipargs+["-r",reqfile])
+            #subprocess.run(pipargs+["-r",reqfile])
+            pipexec(pipargs+["-r",reqfile])
         if not os.path.exists(eelsfile):
-            subprocess.run(pipargs+["git+https://github.com.cnpmjs.org/mhbalthasar/EelS.git"])
+            #subprocess.run(pipargs+["git+https://github.com.cnpmjs.org/mhbalthasar/EelS.git"])
+            pipexec(pipargs+["git+https://github.com.cnpmjs.org/mhbalthasar/EelS.git"])
 
 import sources.main as main
 main.main()
@@ -247,10 +252,12 @@ def installpackage(basedir,uargs):
     module_path=os.path.abspath(os.path.join(basedir,"packages"))
     if not os.path.exists(module_path):
         os.makedirs(module_path)
-    fullargs=["pip3","install","--target=%s" % module_path,"--upgrade"]
-    cmdargs=fullargs+uargs
-    import subprocess
-    subprocess.run(cmdargs)
+    #fullargs=["pip3","install","--target=%s" % module_path,"--upgrade"]
+    #cmdargs=fullargs+uargs
+    #import subprocess
+    #subprocess.run(cmdargs)
+    pipexec(['install',"--target=%s" % module_path,"--upgrade"]+uargs)
+
 
 def deployexe(basedir,uargs):
     createproject(basedir)
@@ -262,8 +269,9 @@ def deployexe(basedir,uargs):
     try:
         __import__("PyInstaller")
     except:
-        import subprocess
-        subprocess.run(["pip3","install","--upgrade","PyInstaller"])
+        #import subprocess
+        #subprocess.run(["pip3","install","--upgrade","PyInstaller"])
+        pipexec(['install',"--upgrade","PyInstaller"])
     import PyInstaller.__main__ as pyi
     eel_file_path="%s%seel" % (os.path.join(module_path,"eel","eel.js"), os.pathsep)
     assets_dir_path="%s%sassets" % (os.path.join(base_full_dir,"assets"), os.pathsep)
