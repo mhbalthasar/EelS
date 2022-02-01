@@ -269,9 +269,11 @@ def deployexe(basedir,uargs):
     try:
         __import__("PyInstaller")
     except:
-        #import subprocess
-        #subprocess.run(["pip3","install","--upgrade","PyInstaller"])
         pipexec(['install',"--upgrade","PyInstaller"])
+    try:
+        __import__("gevent")
+    except:
+        pipexec(['install',"--upgrade","gevent"])
     import PyInstaller.__main__ as pyi
     eel_file_path="%s%seel" % (os.path.join(module_path,"eel","eel.js"), os.pathsep)
     assets_dir_path="%s%sassets" % (os.path.join(base_full_dir,"assets"), os.pathsep)
@@ -294,10 +296,7 @@ def deployexe(basedir,uargs):
         "--hidden-import","gevent.libuv.loop",
         "--hidden-import","gevent.libev",
         "--hidden-import","gevent.libev.corecffi",
-        "--hidden-import","bottle_websocket",
-        "--hidden-import","bottle_websocket",
-        "--hidden-import","bottle_websocket",
-        "--hidden-import","bottle_websocket",
+        "--hidden-import","gevent",
         "--add-data",eel_file_path,
         "--add-data", assets_dir_path] + uargs)
 
