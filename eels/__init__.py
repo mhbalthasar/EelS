@@ -7,6 +7,17 @@ import socket
 from urllib.parse import urljoin
 
 class _init_electrondist:
+    def get_system_arch(self):
+        sys_arch=platform.machine()
+        if sys_arch in ["x86_64","ia64"]:
+            return "amd64"
+        elif sys_arch in ["i386","i686"]:
+            return "x86"
+        elif sys_arch in ["arm64","aarch64", "armv8"]:
+            return "arm64"
+        elif sys_arch in ["armv7l", "arm", "armhf"]:
+            return "armhf"
+        return "unknown"
     def get_electron_url(self):
         electron_Version="9.4.4" # Use 9.4.4 because it is easy to use 'remote' module to control gui.
         electron_Source="https://npm.taobao.org/mirrors/electron"
@@ -51,7 +62,7 @@ class _init_electrondist:
     electron_path=""
 
     def __init__(self,base_path):
-        electron_dir=os.path.join(base_path,'assets','electron_bin')
+        electron_dir=os.path.join(base_path,'assets','electron_bin',self.get_system_arch())
         electron_path=''
         if sys.platform in ['win32', 'win64']:
             electron_path = os.path.join(electron_dir,r'electron.exe')

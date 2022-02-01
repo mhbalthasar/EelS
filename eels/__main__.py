@@ -7,6 +7,18 @@ default_dir=os.path.abspath('.')
 eels_source="https://github.com.cnpmjs.org/mhbalthasar/EelS.git"
 
 class _init_electrondist:
+    def get_system_arch(self):
+        sys_arch=platform.machine()
+        if sys_arch in ["x86_64","ia64"]:
+            return "amd64"
+        elif sys_arch in ["i386","i686"]:
+            return "x86"
+        elif sys_arch in ["arm64","aarch64", "armv8"]:
+            return "arm64"
+        elif sys_arch in ["armv7l", "arm", "armhf"]:
+            return "armhf"
+        return "unknown"
+
     def get_electron_url(self):
         electron_Version="9.4.4" # Use 9.4.4 because it is easy to use 'remote' module to control gui.
         electron_Source="https://npm.taobao.org/mirrors/electron"
@@ -51,7 +63,7 @@ class _init_electrondist:
     electron_path=""
 
     def install(self,base_path):
-        electron_dir=os.path.join(base_path,'assets','electron_bin')
+        electron_dir=os.path.join(base_path,'assets','electron_bin',self.get_system_arch())
         electron_path=''
         if sys.platform in ['win32', 'win64']:
             electron_path = os.path.join(electron_dir,r'electron.exe')
@@ -83,7 +95,7 @@ class _init_electrondist:
         return self.electron_path
 
     def __init__(self,base_path):
-        electron_dir=os.path.join(base_path,'assets','electron_bin')
+        electron_dir=os.path.join(base_path,'assets','electron_bin',self.get_system_arch())
         electron_path=''
         if sys.platform in ['win32', 'win64']:
             electron_path = os.path.join(electron_dir,r'electron.exe')
@@ -92,11 +104,6 @@ class _init_electrondist:
         elif sys.platform in ['darwin', 'macos']:
             electron_path = os.path.join(electron_dir,r'Electron.app','Contents','MacOS','Electron')
         self.electron_path=electron_path
-
-#base_path=os.path.split(sys.argv[0])[0]
-#view_path=os.path.join(base_path,'assets','views')
-#_electron_dist=_init_electrondist(base_path)
-#electron_path=_electron_dist.electron_path
 
 def installpackage(basedir,uargs):
     if len(uargs)==0:
@@ -258,8 +265,10 @@ def deployexe(basedir,uargs):
         import subprocess
         subprocess.run(["pip3","install","--upgrade","PyInstaller"])
     import PyInstaller.__main__ as pyi
-    pyi.run([os.path.join(base_full_dir,"start.py"),"--hidden-import","bottle_websocket","--add-data","%s/eel/eel.js:eel" % module_path,
-        "--add-data", "%s:assets" % os.path.join(base_full_dir,"assets")] + uargs)
+    eel_file_path="%s%seel" % (os.path.join(module_path,"eel","eel.js"), os.pathsep)
+    assets_dir_path="%s%sassets" % (os.path.join(base_full_dir,"assets"), os.pathsep)
+    pyi.run([os.path.join(base_full_dir,"start.py"),"--hidden-import","bottle_websocket","--add-data",eel_file_path,
+        "--add-data", assets_dir_path] + uargs)
 
 def cleanproject(basedir):
     d_electron=os.path.abspath(os.path.join(basedir,"assets","electron_bin"))
