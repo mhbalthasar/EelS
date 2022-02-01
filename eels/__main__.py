@@ -117,6 +117,7 @@ def installpackage(basedir,uargs):
     #cmdargs=fullargs+uargs
     #import subprocess
     #subprocess.run(cmdargs)
+    #print(['install',"--target=%s" % module_path,"--upgrade"]+uargs)
     pipexec(['install',"--target=%s" % module_path,"--upgrade"]+uargs)
 
 def createproject(basefolder):
@@ -180,6 +181,9 @@ if not (os.path.exists(deployfile) and os.path.isfile(deployfile)) :
         if not os.path.exists(eelsfile):
             #subprocess.run(pipargs+["git+https://github.com.cnpmjs.org/mhbalthasar/EelS.git"])
             pipexec(pipargs+["git+https://github.com.cnpmjs.org/mhbalthasar/EelS.git"])
+        python = sys.executable
+        os.execl(python, python, * sys.argv)
+        os.exit(0)
 
 import sources.main as main
 main.main()
@@ -231,6 +235,7 @@ main.main()
             if os.path.exists(tmp_req):
                 print("Install requirements packages...")
                 installpackage(folder,["-r",tmp_req])
+            print("Install EelS packages...")
             installpackage(folder,["git+%s" % eels_source])
         print("Creating start.py...")
         tmp_f=os.path.join(folder,"start.py")
