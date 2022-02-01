@@ -2,7 +2,6 @@ import os
 import sys
 import platform
 from argparse import ArgumentParser
-from pip._internal import main as pipexec
 
 default_dir=os.path.abspath('.')
 eels_source="https://github.com.cnpmjs.org/mhbalthasar/EelS.git"
@@ -106,6 +105,11 @@ class _init_electrondist:
             electron_path = os.path.join(electron_dir,r'Electron.app','Contents','MacOS','Electron')
         self.electron_path=electron_path
 
+def pipexec(args):
+    pythonbin=sys.executable
+    import subprocess
+    subprocess.run([pythonbin,"-m","pip"]+args)
+
 def installpackage(basedir,uargs):
     if len(uargs)==0:
         print("You must input which module you want to install")
@@ -113,11 +117,6 @@ def installpackage(basedir,uargs):
     module_path=os.path.abspath(os.path.join(basedir,"packages"))
     if not os.path.exists(module_path):
         os.makedirs(module_path)
-    #fullargs=["pip3","install","--target=%s" % module_path,"--upgrade"]
-    #cmdargs=fullargs+uargs
-    #import subprocess
-    #subprocess.run(cmdargs)
-    #print(['install',"--target=%s" % module_path,"--upgrade"]+uargs)
     pipexec(['install',"--target=%s" % module_path,"--upgrade"]+uargs)
 
 def createproject(basefolder):
@@ -160,7 +159,6 @@ def main():
     """
     bootloader="""import os
 import sys
-from pip._internal import main as pipexec
 
 base_dir=os.path.abspath(os.path.split(os.path.realpath(__file__))[0])
 module_path=os.path.abspath(os.path.join(os.path.split(os.path.realpath(__file__))[0],"packages"))
@@ -171,19 +169,13 @@ if not (os.path.exists(deployfile) and os.path.isfile(deployfile)) :
     #If Not Deployed
     eelsfile=os.path.join(module_path,"eels","__init__.py")
     if not os.path.exists(eelsfile):
-        #pipargs=["pip3","install","--target=%s" % module_path, "--upgrade"]
-        pipargs=["install","--target=%s" % module_path, "--upgrade"]
+        pipargs=[sys.executable,"-m","pip","install","--target=%s" % module_path, "--upgrade"]
         reqfile=os.path.join(base_dir,"requirements.txt");
-        #import subprocess
+        import subprocess
         if (os.path.exists(reqfile)):
-            #subprocess.run(pipargs+["-r",reqfile])
-            pipexec(pipargs+["-r",reqfile])
+            subprocess.run(pipargs+["-r",reqfile])
         if not os.path.exists(eelsfile):
-            #subprocess.run(pipargs+["git+https://github.com.cnpmjs.org/mhbalthasar/EelS.git"])
-            pipexec(pipargs+["git+https://github.com.cnpmjs.org/mhbalthasar/EelS.git"])
-        python = sys.executable
-        os.execl(python, python, * sys.argv)
-        os.exit(0)
+            subprocess.run(pipargs+["git+https://github.com.cnpmjs.org/mhbalthasar/EelS.git"])
 
 import sources.main as main
 main.main()
