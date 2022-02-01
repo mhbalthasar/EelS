@@ -144,8 +144,7 @@ python3 ./eelstool.py --clean ~/eelproject
   
   2.run "--install" command: (use paddlehub module as example)
 ```
-cd ~/eelproject
-python3 ./eelstool.py --install paddlehub
+python3 ./eelstool.py --install ~/eelproject paddlehub
 ```
 
 * How to deploy project:
