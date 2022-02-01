@@ -1,7 +1,11 @@
 # EelS -- Eel Scaffold
 This is a scaffold for Eel to let you use electron as GUI of python easy.
+the functions is as same as eel with a little different.
 
-the functions is as same as eel with a little different:
+* Basic Depens:
+
+1. Python >= 3.4        [ basic runtime       ]
+2. Git                  [ the toolkit need it ]
 
 * How to run:
 
